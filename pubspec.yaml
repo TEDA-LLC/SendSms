@@ -37,7 +37,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
-  telephony: ^0.2.0
+  telephony:
+    git:
+      url: https://github.com/suhardik/s_telephony.git
+      ref: develop 
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

@@ -125,7 +125,6 @@ class _SendSmsState extends State<SendSms> {
                               to: smsData![i].tel.toString(), message:smsData![i].rezult.toString());
                               print(i);
                         }
-
                         // showSnackBar(context, "Text", Colors.green);
                         }else{
                           showSnackBar(context, "No data", Colors.red);
