@@ -41,9 +41,6 @@ class _SendSmsState extends State<SendSms> {
 
   List<Data>? smsData;
 
-  List<String> phoneNumbers = ["995075750", "999690508"];
-  List<String> smses = ["995075750", "hello"];
-
   // Platform messages
   //are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
@@ -71,8 +68,7 @@ class _SendSmsState extends State<SendSms> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Sms'),
       ),
@@ -114,20 +110,20 @@ class _SendSmsState extends State<SendSms> {
                   ElevatedButton(
                       onPressed: () {
                         getData().then((value) => setState(() {}));
-                        
                       },
                       child: const Text("Get data")),
                   ElevatedButton(
                       onPressed: () async {
                         if (smsData != null) {
-                            for (var i = 0; i < smsData!.length; i++) {
-                          await telephony.sendSms(
-                              to: smsData![i].tel.toString(), message:smsData![i].rezult.toString());
-                              print(i);
-                        }
-                        // showSnackBar(context, "Text", Colors.green);
-                        }else{
-                          showSnackBar(context, "No data", Colors.red);
+                          for (var i = 0; i < smsData!.length; i++) {
+                            await telephony.sendSms(
+                                to: smsData![i].tel.toString(),
+                                message: smsData![i].rezult.toString());
+                            print(i);
+                          }
+                          showSnackBar("Text", Colors.green);
+                        } else {
+                          showSnackBar("No data", Colors.red);
                         }
                       },
                       child: Text('Send sms'))
@@ -138,14 +134,14 @@ class _SendSmsState extends State<SendSms> {
           ],
         ),
       ),
-    ));
+    );
   }
- showSnackBar(BuildContext context, String content, Color color) {
-    return 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+
+  showSnackBar(String content, Color color) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(content),
       backgroundColor: color,
-      action: SnackBarAction(label: "Hide", onPressed: (){}),
+      action: SnackBarAction(label: "Hide", onPressed: () {}),
     ));
   }
 }
