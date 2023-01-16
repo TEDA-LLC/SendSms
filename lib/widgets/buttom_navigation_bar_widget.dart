@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sendsms/constants/colors_const.dart';
 import 'package:sendsms/screens/main/cubit/main_cubit.dart';
 
 
@@ -21,7 +19,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.playlist_add,
+              Icons.sms,
               // color: currentPage == 0
               //     ? ColorConst.knavigationPressed
               //     : ColorConst.knavigationUnpressed,
@@ -30,31 +28,31 @@ class BottomNavigationBarWidget extends StatelessWidget {
                   : 25.h,
                   
             ),
-            label: 'Flag 1',
+            label: 'Flag 2',
             backgroundColor:Colors.greenAccent,
           ),
          
           BottomNavigationBarItem(
-              icon: Icon(Icons.sms,
+              icon: Icon(Icons.folder,
                   // color: currentPage == 1
                   //     ? ColorConst.knavigationPressed
                   //     : ColorConst.knavigationUnpressed,
                       size:currentPage == 1
                   ? 35.h
                   : 25.h,),
-              label: 'Flag 2',
+              label: 'Flag 3',
             backgroundColor:Colors.yellowAccent,
 
               ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.folder,
+              icon: Icon(Icons.settings,
                   // color: currentPage == 2
                   //     ? ColorConst.knavigationPressed
                   //     : ColorConst.knavigationUnpressed,
                       size:currentPage == 2
                   ? 35.h
                   : 25.h,),
-              label: 'Flag 3',
+              label: 'Settigns',
             backgroundColor:Colors.redAccent,
               ),
            
