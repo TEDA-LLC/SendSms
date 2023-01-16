@@ -92,25 +92,30 @@ class _FlagTwoViewState extends State<FlagTwoView> {
                         child: const Text("Flag 2")),
                     ElevatedButton(
                         onPressed: () async {
-                          if (_smsDataFlag1 != null) {
+                          if (_smsDataFlag1 != null && _smsDataFlag1!.isNotEmpty) {
                             for (var i = 0; i < _smsDataFlag1!.length; i++) {
                               await telephony.sendSms(
                                   to: _smsDataFlag1![i].tel.toString(),
                                   message: _smsDataFlag1![i].rezult.toString());
                               print(i);
-
+                               smsLength ++;
+                             
                             }
-                            
+                            if(_smsDataFlag1!=null){
+                             _smsDataFlag1!.removeRange(0, smsLength);
+                             smsLength =0;
+                            setState(() {
+                              
+                            });
+                          }
                            
                             // ignore: use_build_context_synchronously
                             showSnackBar(context, "SMS jo'natildi", Colors.green);
                           } else {
                             showSnackBar(context, "No data", Colors.red);
                           }
-                          
-                            setState(() {
-                              
-                            });
+                           
+      
                         },
                         child: const Text('Send sms')),
                   ],
@@ -121,6 +126,7 @@ class _FlagTwoViewState extends State<FlagTwoView> {
           ),
         ),
       ),
+     
     );
   }
 
@@ -132,7 +138,6 @@ class _FlagTwoViewState extends State<FlagTwoView> {
       print(res.data);
       SmsModel smses = SmsModel.fromJson(res.data);
       _smsDataFlag1 = smses.data;
-      smsLength = _smsDataFlag1!.length;
     } catch (e) {
       print("Errorr >> ${e.toString()}");
     }
