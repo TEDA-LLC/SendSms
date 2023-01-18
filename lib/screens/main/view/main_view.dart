@@ -4,6 +4,7 @@ import 'package:sendsms/screens/flag_two_view.dart';
 import 'package:sendsms/screens/main/cubit/main_cubit.dart';
 import 'package:sendsms/screens/main/state/main_state.dart';
 import 'package:sendsms/screens/send_sms_view.dart';
+import 'package:sendsms/screens/settings_view.dart';
 import 'package:sendsms/widgets/buttom_navigation_bar_widget.dart';
 
 
@@ -29,7 +30,7 @@ class MainView extends StatelessWidget {
              else if (state is StateFlag2) {
               return const SendSms();
             } else if (state is StateFlag3) {
-               return const Center(child: Text('Flag 3'),);
+               return SettingsView();
             }
           else{
             return Container();

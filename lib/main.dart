@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sendsms/screens/main/view/main_view.dart';
 
 
 
-void main() {
-  
+void main() async{
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
