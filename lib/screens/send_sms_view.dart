@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sendsms/models/sms_model.dart';
-import 'package:sendsms/widgets/snackbar_widget.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
 

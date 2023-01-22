@@ -108,7 +108,8 @@ class _FlagTwoViewState extends State<FlagTwoView> {
                               
                             });
                           }
-                           
+                           Response response = await Dio().put("http://185.185.80.245:77/sms",data: [1]);
+                           print(response.data);
                             // ignore: use_build_context_synchronously
                             showSnackBar(context, "SMS jo'natildi", Colors.green);
                           } else {

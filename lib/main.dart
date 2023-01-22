@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:sendsms/screens/main/view/main_view.dart';
+
+import 'screens/main/cubit/main_cubit.dart';
 
 
 
 void main() async{
-  await GetStorage.init();
-  runApp(const MyApp());
+ WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  await Hive.openBox('url_box');
+
+  runApp(
+    MultiBlocProvider(providers: [ BlocProvider(create: (context) => MainCubit()),],
+    child:  const MyApp(),)
+   );
 }
 
 class MyApp extends StatelessWidget {

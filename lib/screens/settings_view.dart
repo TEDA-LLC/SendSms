@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:hive/hive.dart';
+
+
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
 
   @override
   State<SettingsView> createState() => _SettingsViewState();
 }
-
 List<String> urls = [];
-
+List<String> list1 = ['10',"11"];
 class _SettingsViewState extends State<SettingsView> {
+  @override
+  void initState() {
+    List myList = urlbox.get('url_box');
+    super.initState();
+  }
+  var urlbox = Hive.box("url_box");
   TextEditingController urlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -18,12 +26,12 @@ class _SettingsViewState extends State<SettingsView> {
       appBar: AppBar(title: const Text("Settings")),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(40.0.r),
+          padding: EdgeInsets.all(28.0.r),
           child: Column(
             children: [
               Row(children: [
                 Padding(
-                  padding: EdgeInsets.only(right: 15.0.w),
+                  padding: EdgeInsets.only(right: 15.0.r),
                   child: SizedBox(
                     height: 60.h,
                     width: 300.w,
@@ -47,8 +55,9 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async{
                     urls.add(urlController.text);
+                    urlbox.put("urslList", urls);
                     setState(() {});
                     print(1);
                   },
@@ -81,9 +90,9 @@ class _SettingsViewState extends State<SettingsView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                    height:urls[index].length > 35 ? 45.h : 20.h,
+                                    height:urlbox.getAt(index)[index].length > 35 ? 45.h : 20.h,
                                     width: 300.w,
-                                    child: Text(urls[index])),
+                                    child: Text(urlbox.getAt(index)[index].toString())),
                                 IconButton(
                                     onPressed: () {
                                       urls.removeAt(index);
