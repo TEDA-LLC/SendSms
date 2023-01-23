@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:sendsms/boxes/boxes.dart';
+import 'package:sendsms/models/url_list_model.dart';
 
 
 class SettingsView extends StatefulWidget {
@@ -10,15 +13,15 @@ class SettingsView extends StatefulWidget {
   @override
   State<SettingsView> createState() => _SettingsViewState();
 }
-List<String> urls = [];
-List<String> list1 = ['10',"11"];
+
 class _SettingsViewState extends State<SettingsView> {
-  @override
-  void initState() {
-    List myList = urlbox.get('url_box');
-    super.initState();
+@override
+  void dispose() {
+    Hive.box("urls").close();
+    super.dispose();
   }
-  var urlbox = Hive.box("url_box");
+
+ 
   TextEditingController urlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -56,30 +59,53 @@ class _SettingsViewState extends State<SettingsView> {
                     ),
                   ),
                   onTap: () async{
-                    urls.add(urlController.text);
-                    urlbox.put("urslList", urls);
+                    addUrl(urlController.text);
                     setState(() {});
                     print(1);
                   },
                 ),
               ]),
-              if (urls.isEmpty)
-                Padding(
-                  padding: EdgeInsets.all(20.r),
-                  child: Text(
-                    "Add Url",
-                    style:
-                        TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
-                  ),
-                )
-              else
-                Container(
-                  height: 600.h,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 20.r),
-                    child: ListView(
-                      children: List<Widget>.generate(urls.length, (int index) {
-                        return Container(
+              ValueListenableBuilder<Box<UrllList>>(valueListenable: Boxes.getUrllList().listenable(),
+               builder:((context, box, _) {
+                final urls = box.values.toList().cast<UrllList>();
+
+                return buildContent(urls);
+               }))
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget buildContent(List<UrllList> urls){
+    if(urls.isEmpty){
+      return const Center(
+        child: Text(
+          'Add url',
+          style: TextStyle(fontSize: 24),
+        ),
+      );
+    }else{
+     return SizedBox(
+      height: 500.h,
+      width: 400.w,
+            child: ListView.builder(
+              padding: EdgeInsets.all(8.r),
+              itemCount: urls.length,
+              itemBuilder: (BuildContext context, int index) {
+                final url = urls[index];
+
+                return buildUrlList(context, url);
+              },
+            ),
+          );
+    }
+  }
+   
+  Widget buildUrlList(BuildContext context,UrllList url){
+    return Container(
                           decoration: BoxDecoration(
                               color: Colors.green,
                               borderRadius: BorderRadius.circular(5.w)),
@@ -90,25 +116,30 @@ class _SettingsViewState extends State<SettingsView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                    height:urlbox.getAt(index)[index].length > 35 ? 45.h : 20.h,
+                                    height: 20.h,
                                     width: 300.w,
-                                    child: Text(urlbox.getAt(index)[index].toString())),
+                                    child: Text(url.url)),
                                 IconButton(
                                     onPressed: () {
-                                      urls.removeAt(index);
+                                      deleteUrl(url);
                                       setState(() {});
                                     },
                                     icon: const Icon(Icons.delete))
                               ]),
                         );
-                      }),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
+
+  Future addUrl(String url) async{
+  final urls = UrllList()
+  ..url = url;
+
+  final box = Boxes.getUrllList();
+  box.add(urls);
+  }
+
+  void deleteUrl(UrllList url){
+     url.delete();
+  }
+
+  
 }

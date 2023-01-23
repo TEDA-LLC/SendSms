@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
+import 'package:sendsms/models/url_list_model.dart';
+import 'package:hive/hive.dart';
 import 'package:sendsms/screens/main/view/main_view.dart';
 
 import 'screens/main/cubit/main_cubit.dart';
@@ -13,8 +14,8 @@ void main() async{
  WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
-  await Hive.openBox('url_box');
-
+  Hive.registerAdapter(UrllListAdapter());
+ await Hive.openBox<UrllList>('urls');
   runApp(
     MultiBlocProvider(providers: [ BlocProvider(create: (context) => MainCubit()),],
     child:  const MyApp(),)

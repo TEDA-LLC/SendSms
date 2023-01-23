@@ -11,6 +11,7 @@ class MainCubit extends Cubit<MainState> {
 
   int currentpage = 0;
 
+  
 
   pages(int index) {
     currentpage = index;
