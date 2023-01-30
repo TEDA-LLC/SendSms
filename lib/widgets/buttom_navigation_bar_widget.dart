@@ -28,7 +28,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
                   : 25.h,
                   
             ),
-            label: 'Flag 2',
+            label: 'Sms',
             backgroundColor:Colors.greenAccent,
           ),
          
@@ -40,7 +40,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
                       size:currentPage == 1
                   ? 35.h
                   : 25.h,),
-              label: 'Flag 3',
+              label: 'Arxiv',
             backgroundColor:Colors.yellowAccent,
 
               ),
@@ -52,7 +52,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
                       size:currentPage == 2
                   ? 35.h
                   : 25.h,),
-              label: 'Settigns',
+              label: 'Sozlash',
             backgroundColor:Colors.redAccent,
               ),
            

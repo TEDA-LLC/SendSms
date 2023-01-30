@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/url_list_model.dart';
-
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -15,18 +15,18 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-@override
+  @override
   void dispose() {
-    Hive.box("urls").close();
+    Hive.box("urlss").close();
     super.dispose();
   }
-
- 
+  var urlIndexBox = GetStorage();
+  
   TextEditingController urlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      appBar: AppBar(title:Text("Settings: Ip address > ${urlIndexBox.read("url_index")}")),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(28.0.r),
@@ -58,19 +58,20 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                     ),
                   ),
-                  onTap: () async{
+                  onTap: () async {
                     addUrl(urlController.text);
                     setState(() {});
                     print(1);
                   },
                 ),
               ]),
-              ValueListenableBuilder<Box<UrllList>>(valueListenable: Boxes.getUrllList().listenable(),
-               builder:((context, box, _) {
-                final urls = box.values.toList().cast<UrllList>();
+              ValueListenableBuilder<Box<UrllList>>(
+                  valueListenable: Boxes.getUrllList().listenable(),
+                  builder: ((context, box, _) {
+                    final urls = box.values.toList().cast<UrllList>();
 
-                return buildContent(urls);
-               }))
+                    return buildContent(urls);
+                  }))
             ],
           ),
         ),
@@ -78,68 +79,76 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
-
-  Widget buildContent(List<UrllList> urls){
-    if(urls.isEmpty){
+  Widget buildContent(List<UrllList> urls) {
+    if (urls.isEmpty) {
       return const Center(
         child: Text(
           'Add url',
           style: TextStyle(fontSize: 24),
         ),
       );
-    }else{
-     return SizedBox(
-      height: 500.h,
-      width: 400.w,
-            child: ListView.builder(
-              padding: EdgeInsets.all(8.r),
-              itemCount: urls.length,
-              itemBuilder: (BuildContext context, int index) {
-                final url = urls[index];
-
-                return buildUrlList(context, url);
-              },
-            ),
-          );
+    } else {
+      return SizedBox(
+        height: 500.h,
+        width: 400.w,
+        child: ListView.builder(
+          padding: EdgeInsets.all(8.r),
+          itemCount: urls.length,
+          itemBuilder: (BuildContext context, int index) {
+            final url = urls[index];
+            
+            return buildUrlList(context, url,index);
+          },
+        ),
+      );
     }
   }
-   
-  Widget buildUrlList(BuildContext context,UrllList url){
-    return Container(
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(5.w)),
-                          margin: EdgeInsets.only(bottom: 10.r),
-                          height: 60.h,
-                          width: 350.w,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                    height: 20.h,
-                                    width: 300.w,
-                                    child: Text(url.url)),
-                                IconButton(
-                                    onPressed: () {
-                                      deleteUrl(url);
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.delete))
-                              ]),
-                        );
+
+  Widget buildUrlList(BuildContext context, UrllList url, int index) {
+    return GestureDetector(
+      onDoubleTap: () {
+        urlIndexBox.write("url_index", url.url.toString());
+        showSnackBar("Ip changes ${urlIndexBox.read("url_index")}", Colors.green);
+        setState(() {
+          
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.green, borderRadius: BorderRadius.circular(5.w)),
+        margin: EdgeInsets.only(bottom: 10.r),
+        height: 60.h,
+        width: 350.w,
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          SizedBox(height: 20.h, width: 300.w, child: Text(url.url)),
+          IconButton(
+              onPressed: () {
+                deleteUrl(url);
+                setState(() {});
+              },
+              icon: const Icon(Icons.delete))
+        ]),
+      ),
+    );
   }
 
-  Future addUrl(String url) async{
-  final urls = UrllList()
-  ..url = url;
+  Future addUrl(String url) async {
+    final urls = UrllList()..url = url;
 
-  final box = Boxes.getUrllList();
-  box.add(urls);
+    final box = Boxes.getUrllList();
+    box.add(urls);
   }
 
-  void deleteUrl(UrllList url){
-     url.delete();
+  void deleteUrl(UrllList url) {
+    url.delete();
   }
 
-  
+
+   showSnackBar(String content, Color color) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(content),
+      backgroundColor: color,
+      action: SnackBarAction(label: "Hide", onPressed: () {}),
+    ));
+  }
 }

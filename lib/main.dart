@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:sendsms/models/sms_model.dart';
 import 'package:sendsms/models/url_list_model.dart';
 import 'package:hive/hive.dart';
 import 'package:sendsms/screens/main/view/main_view.dart';
+import 'package:sendsms/services/new_sms_service.dart';
 
 import 'screens/main/cubit/main_cubit.dart';
 
@@ -12,12 +15,20 @@ import 'screens/main/cubit/main_cubit.dart';
 
 void main() async{
  WidgetsFlutterBinding.ensureInitialized();
-
   await Hive.initFlutter();
   Hive.registerAdapter(UrllListAdapter());
- await Hive.openBox<UrllList>('urls');
+  Hive.registerAdapter(SmsModelAdapter());
+  Hive.registerAdapter(DatasAdapter());
+  await Hive.openBox<UrllList>('urlss');
+  await Hive.openBox<Datas>("arxiv_model");
+  await Hive.openBox<Datas>("data_model");
+  await Hive.openBox<Datas>("new_sms");
+  await SmsService.openBox();
+
+  await GetStorage.init();
+  
   runApp(
-    MultiBlocProvider(providers: [ BlocProvider(create: (context) => MainCubit()),],
+    MultiBlocProvider(providers: [BlocProvider(create: (context) => MainCubit()),],
     child:  const MyApp(),)
    );
 }

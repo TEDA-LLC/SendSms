@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sendsms/screens/flag_two_view.dart';
+import 'package:sendsms/screens/sms_view.dart';
 import 'package:sendsms/screens/main/cubit/main_cubit.dart';
 import 'package:sendsms/screens/main/state/main_state.dart';
-import 'package:sendsms/screens/send_sms_view.dart';
+import 'package:sendsms/screens/arxiv_view.dart';
 import 'package:sendsms/screens/settings_view.dart';
 import 'package:sendsms/widgets/buttom_navigation_bar_widget.dart';
 
@@ -25,7 +25,7 @@ class MainView extends StatelessWidget {
           listener: (context, state) {},
           builder: (context, state) {
             if (state is StateFlag1) {
-              return FlagTwoView();
+              return SmsView();
             } 
              else if (state is StateFlag2) {
               return const SendSms();

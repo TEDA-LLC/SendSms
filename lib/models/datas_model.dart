@@ -1,36 +1,8 @@
-
 import 'package:hive/hive.dart';
-part 'sms_model.g.dart';
 
-@HiveType(typeId: 2)
-class SmsModel extends HiveObject{
-  @HiveField(0)
-  String? message;
-  @HiveField(1)
-  bool? success;
-  @HiveField(2)
-  int? status;
-  @HiveField(3)
-  List<Datas>? data;
+part 'datas_model.g.dart';
 
-  SmsModel({this.message, this.success, this.status, this.data});
-
-  SmsModel.fromJson(Map<String, dynamic> json) {
-    message = json['message'];
-    success = json['success'];
-    status = json['status'];
-    if (json['data'] != null) {
-      data = <Datas>[];
-      json['data'].forEach((v) {
-        data!.add(Datas.fromJson(v));
-      });
-    }
-  }
-
- 
-}
-
-@HiveType(typeId: 3)
+@HiveType(typeId: 4)
 class Datas extends HiveObject{
   @HiveField(0)
   int? id;
