@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:sendsms/screens/main/state/main_state.dart';
@@ -11,8 +13,8 @@ class MainCubit extends Cubit<MainState> {
 
   int currentpage = 0;
 
-  
-
+  bool serLoc = true;
+  int serverChek  = 1;
   pages(int index) {
     currentpage = index;
     if (index == 0) {
@@ -22,5 +24,15 @@ class MainCubit extends Cubit<MainState> {
     } else if (index == 2) {
       emit(StateFlag3());
     } 
+  }
+
+
+  changeSmsView(bool trueFalse){
+    serLoc = trueFalse;
+  }
+  
+
+  serverCheking(int i){
+    serverChek = i;
   }
 }

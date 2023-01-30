@@ -17,7 +17,7 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   @override
   void dispose() {
-    Hive.box("urlss").close();
+    // Hive.box("urlss").close();
     super.dispose();
   }
   var urlIndexBox = GetStorage();
@@ -61,7 +61,7 @@ class _SettingsViewState extends State<SettingsView> {
                   onTap: () async {
                     addUrl(urlController.text);
                     setState(() {});
-                    print(1);
+                    
                   },
                 ),
               ]),

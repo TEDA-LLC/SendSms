@@ -21,7 +21,7 @@ void main() async{
   Hive.registerAdapter(DatasAdapter());
   await Hive.openBox<UrllList>('urlss');
   await Hive.openBox<Datas>("arxiv_model");
-  await Hive.openBox<Datas>("data_model");
+  await SmsService.openBoxDataModel();
   await Hive.openBox<Datas>("new_sms");
   await SmsService.openBox();
 

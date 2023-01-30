@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/sms_model.dart';
+import 'package:sendsms/screens/main/cubit/main_cubit.dart';
 import 'package:sendsms/services/new_sms_service.dart';
 import 'package:telephony/telephony.dart';
 
@@ -39,6 +41,7 @@ class _SmsViewState extends State<SmsView> {
 
   @override
   Widget build(BuildContext context) {
+    serLoc = context.watch<MainCubit>().serLoc;
     return Scaffold(
       appBar: AppBar(title: Text("New IP > $url")),
       body: SingleChildScrollView(
@@ -55,7 +58,7 @@ class _SmsViewState extends State<SmsView> {
                   "Number of sms ${smsDataVariable == null ? 0 : smsDataVariable!.length}"),
               
               ValueListenableBuilder<Box<Datas>>(
-                  valueListenable:serLoc == true ? SmsBoxes.getSmsDataList().listenable() : NewSmsBoxes.getNewSmsDataList().listenable(),
+                  valueListenable: SmsBoxes.getSmsDataList().listenable(),
                   builder: ((context, box, _) {
                     final datas = box.values.toList().cast<Datas>();
                     return buildContent(datas);
@@ -84,7 +87,8 @@ class _SmsViewState extends State<SmsView> {
                             getDataFlag2(url).then((value) => setState(() {}));
                           } else {
                             showSnackBar(context, "No url", Colors.red);
-                          }
+                          }print(serLoc);
+
                         },
                         child: const Text("Local")),
                     //yuklangan smslar uchun knopk
@@ -98,7 +102,7 @@ class _SmsViewState extends State<SmsView> {
                               await telephony.sendSms(
                                   to: smsDataVariable[i].tel.toString(),
                                   message:
-                                      smsDataVariable[i].rezult.toString());
+                                      smsDataVariable[i].zapros.toString());
                               print(i);
                               smsLength++;
                               // har bir yarilgan smsni holati 4 bo'lishi garak
@@ -108,7 +112,6 @@ class _SmsViewState extends State<SmsView> {
                               smsLength = 0;
                               setState(() {});
                             }
-
                             //agar list of id jo'natilsa, true qaytmasa telefon bazasiga yozish
 
                             //  Response response = await Dio().put("http://185.185.80.245:77/sms",data: [1]);
@@ -130,6 +133,11 @@ class _SmsViewState extends State<SmsView> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: (){ 
+        SmsService.boxLocalClear();
+      },
+      child: Icon(Icons.clear),
       ),
     );
   }
@@ -174,56 +182,15 @@ class _SmsViewState extends State<SmsView> {
         child: Text(data.id.toString()),
       ),
       title: Text(data.tel.toString()),
-      subtitle: Text(data.rezult.toString()),
+      subtitle: Text(data.zapros.toString()),
     );
   }
 
   Future getDataFlag1(String url,BuildContext context) async {
     try {
-      Response res = await Dio().get("http://$url:77/sms/status?status=1");
-      // print(res.data.data[0].user.username);
-      print(res.data);
-      SmsModel smses = SmsModel.fromJson(res.data);
-      _smsData = smses.data;
+      SmsService.getSmsFlag1(url,context).
+      then((value){return setState(() {});});
 
-      if (_smsData != null && _smsData!.isNotEmpty) {
-        for (var i = 0; i < _smsData!.length; i++) {
-          addSmsData(
-              _smsData![i].id,
-              _smsData![i].zapros,
-              _smsData![i].rezult,
-              _smsData![i].platforma,
-              _smsData![i].tel,
-              _smsData![i].flag,
-              _smsData![i].sana);
-        }
-        debugPrint("Hive writened");
-      }
-
-      // if (_smsData != null && _smsData!.isNotEmpty) {
-      //   Hive.box("new_sms").clear();
-      //   for (var i = 0; i < _smsData!.length; i++) {
-      //     addNewSmsData(
-      //         _smsData![i].id,
-      //         _smsData![i].zapros,
-      //         _smsData![i].rezult,
-      //         _smsData![i].platforma,
-      //         _smsData![i].tel,
-      //         _smsData![i].flag,
-      //         _smsData![i].sana);
-      //   }
-      //   debugPrint("Hive writened new sms");
-      //   serLoc = false;
-      //   setState(() {});
-      // }
-
-      SmsService.getSmsFlag1(url);
-      
-      // else{
-      //   debugPrint("No new sms");
-      //   // ignore: use_build_context_synchronously
-      //   showSnackBar(context,"No new sms",Colors.yellow);
-      // }
     } catch (e) {
       print("Errorr >> ${e.toString()}");
     }
@@ -231,14 +198,14 @@ class _SmsViewState extends State<SmsView> {
 
   Future getDataFlag2(String url) async {
     try {
-      Response res = await Dio().get("http://$url:77/sms/status?status=2");
+      Response res = await Dio().get("http://$url:8081/application/json/sms/?del_flag=2");
       // print(res.data.data[0].user.username);
       print(res.data);
       SmsModel smses = SmsModel.fromJson(res.data);
       _smsData = smses.data;
 
       if (_smsData != null && _smsData!.isNotEmpty) {
-        Hive.box("data_model").clear();
+       await SmsService.boxLocalClear();
         for (var i = 0; i < _smsData!.length; i++) {
           addSmsData(
               _smsData![i].id,
@@ -255,7 +222,7 @@ class _SmsViewState extends State<SmsView> {
       print("Errorr >> ${e.toString()}");
     }
 
-    serLoc = true;
+    context.read<MainCubit>().changeSmsView(true);
     
      
   }
@@ -298,8 +265,7 @@ class _SmsViewState extends State<SmsView> {
 
   @override
   void dispose() {
-    Hive.box("data_model").close();
-    // TODO: implement dispose
+
     super.dispose();
   }
 }
