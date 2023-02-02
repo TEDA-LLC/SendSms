@@ -7,6 +7,7 @@ import 'package:sendsms/models/sms_model.dart';
 import 'package:sendsms/models/url_list_model.dart';
 import 'package:hive/hive.dart';
 import 'package:sendsms/screens/main/view/main_view.dart';
+import 'package:sendsms/screens/settings_view.dart';
 import 'package:sendsms/services/new_sms_service.dart';
 
 import 'screens/main/cubit/main_cubit.dart';
@@ -20,7 +21,7 @@ void main() async{
   Hive.registerAdapter(SmsModelAdapter());
   Hive.registerAdapter(DatasAdapter());
   await Hive.openBox<UrllList>('urlss');
-  await Hive.openBox<Datas>("arxiv_model");
+  await SmsService.openBoxArxivModel();
   await SmsService.openBoxDataModel();
   await Hive.openBox<Datas>("new_sms");
   await SmsService.openBox();
@@ -29,16 +30,20 @@ void main() async{
   
   runApp(
     MultiBlocProvider(providers: [BlocProvider(create: (context) => MainCubit()),],
-    child:  const MyApp(),)
+    child:   MyApp(),)
    );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  var urlbox = GetStorage();
+  
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final url = urlbox.read("url_index");
+    url== null ? context.read<MainCubit>().changeCurrentPage(2)  : context.read<MainCubit>().changeCurrentPage(0);
     return ScreenUtilInit(
         designSize: const Size(428, 926),
         minTextAdapt: true,
@@ -50,7 +55,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: MainView(),
+            home:  MainView(),
           );
         });
   }

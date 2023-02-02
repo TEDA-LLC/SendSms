@@ -32,7 +32,7 @@ class _SmsViewState extends State<SmsView> {
   @override
   void initState() {
     url = urlBox.read("url_index").toString();
-    // box = Hive.box("data_model");
+    //box = Hive.box("data_model");
     if (box != null) {
       smsDataVariable = box.get("data_model");
     }
@@ -54,16 +54,20 @@ class _SmsViewState extends State<SmsView> {
               SizedBox(
                 height: 20.h,
               ),
-              Text(
-                  "Number of sms ${smsDataVariable == null ? 0 : smsDataVariable!.length}"),
-              
+              // Text(
+              //     "Number of sms ${smsDataVariable == null ? 0 : smsDataVariable!.length}"),
               ValueListenableBuilder<Box<Datas>>(
                   valueListenable: SmsBoxes.getSmsDataList().listenable(),
                   builder: ((context, box, _) {
                     final datas = box.values.toList().cast<Datas>();
-                    return buildContent(datas);
+                    final List<Datas> data = [];
+                    for (var i = 0; i < datas.length; i++) {
+                      if (datas[i].flag == 2) {
+                        data.add(datas[i]);
+                      }
+                    }
+                    return buildContent(data);
                   })),
-              
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
                 width: MediaQuery.of(context).size.width * 0.8,
@@ -73,59 +77,22 @@ class _SmsViewState extends State<SmsView> {
                     ElevatedButton(
                         onPressed: () {
                           if (url.isNotEmpty) {
-                            getDataFlag1(url,context).then((value) => setState(() {}));
+                            getDataFlag1(url, context)
+                                .then((value) => setState(() {}));
                           } else {
                             showSnackBar(
                                 context, "Ip manzil kiriting", Colors.red);
                           }
                         },
-                        child: const Text("Server")),
-                    ElevatedButton(
-                        onPressed: () {
-                          //agar bazada flag 4 bo'lsa ularni serverga jo'natib obnavit qilish kerak
-                          if (url.length > 3) {
-                            getDataFlag2(url).then((value) => setState(() {}));
-                          } else {
-                            showSnackBar(context, "No url", Colors.red);
-                          }print(serLoc);
-
-                        },
-                        child: const Text("Local")),
-                    //yuklangan smslar uchun knopk
-                    //a
-
+                        child: const Text("Yangi Smslar")),
                     ElevatedButton(
                         onPressed: () async {
-                          if (smsDataVariable != null &&
-                              smsDataVariable.isNotEmpty) {
-                            for (var i = 0; i < smsDataVariable.length; i++) {
-                              await telephony.sendSms(
-                                  to: smsDataVariable[i].tel.toString(),
-                                  message:
-                                      smsDataVariable[i].zapros.toString());
-                              print(i);
-                              smsLength++;
-                              // har bir yarilgan smsni holati 4 bo'lishi garak
-                            }
-                            if (smsDataVariable != null) {
-                              smsDataVariable.removeRange(0, smsLength);
-                              smsLength = 0;
-                              setState(() {});
-                            }
-                            //agar list of id jo'natilsa, true qaytmasa telefon bazasiga yozish
-
-                            //  Response response = await Dio().put("http://185.185.80.245:77/sms",data: [1]);
-
-                            //  print(response.data);
-
-                            // ignore: use_build_context_synchronously
-                            showSnackBar(
-                                context, "SMS jo'natildi", Colors.green);
-                          } else {
-                            showSnackBar(context, "No data", Colors.red);
-                          }
+                          await SmsService.sendingSms(context, url);
+                          setState(() {
+                            
+                          });
                         },
-                        child: const Text("Sms jo'natish")),
+                        child: const Text("Smslarni jo'natish")),
                   ],
                 ),
               ),
@@ -134,18 +101,13 @@ class _SmsViewState extends State<SmsView> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){ 
-        SmsService.boxLocalClear();
-      },
-      child: Icon(Icons.clear),
-      ),
     );
   }
 
   Widget buildContent(List<Datas> data) {
     if (data.isEmpty) {
       return Container(
-        height: 550.h,
+        height: 620.h,
         width: 380.w,
         color: Colors.blueAccent.shade100,
         child: const Center(
@@ -157,7 +119,7 @@ class _SmsViewState extends State<SmsView> {
       );
     } else {
       return Container(
-        height: 550.h,
+        height: 620.h,
         width: 380.w,
         color: Colors.blueAccent.shade100,
         child: ListView.builder(
@@ -186,45 +148,14 @@ class _SmsViewState extends State<SmsView> {
     );
   }
 
-  Future getDataFlag1(String url,BuildContext context) async {
+  Future getDataFlag1(String url, BuildContext context) async {
     try {
-      SmsService.getSmsFlag1(url,context).
-      then((value){return setState(() {});});
-
+      SmsService.getSmsFlag1(url, context).then((value) {
+        return setState(() {});
+      });
     } catch (e) {
       print("Errorr >> ${e.toString()}");
     }
-  }
-
-  Future getDataFlag2(String url) async {
-    try {
-      Response res = await Dio().get("http://$url:8081/application/json/sms/?del_flag=2");
-      // print(res.data.data[0].user.username);
-      print(res.data);
-      SmsModel smses = SmsModel.fromJson(res.data);
-      _smsData = smses.data;
-
-      if (_smsData != null && _smsData!.isNotEmpty) {
-       await SmsService.boxLocalClear();
-        for (var i = 0; i < _smsData!.length; i++) {
-          addSmsData(
-              _smsData![i].id,
-              _smsData![i].zapros,
-              _smsData![i].rezult,
-              _smsData![i].platforma,
-              _smsData![i].tel,
-              _smsData![i].flag,
-              _smsData![i].sana);
-        }
-        debugPrint("Hive writened");
-      }
-    } catch (e) {
-      print("Errorr >> ${e.toString()}");
-    }
-
-    context.read<MainCubit>().changeSmsView(true);
-    
-     
   }
 
   Future addSmsData(int? id, String? zapros, String? rezult, String? platforma,
@@ -265,7 +196,6 @@ class _SmsViewState extends State<SmsView> {
 
   @override
   void dispose() {
-
     super.dispose();
   }
 }

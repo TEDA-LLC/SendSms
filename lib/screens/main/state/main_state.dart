@@ -14,3 +14,12 @@ class StateFlag2 extends MainState {
 class StateFlag3 extends MainState {
   StateFlag3();
 }
+class StateFlag4 extends MainState {
+  StateFlag4();
+}
+
+
+class StateFlag0 extends MainState {
+  StateFlag0();
+}
+

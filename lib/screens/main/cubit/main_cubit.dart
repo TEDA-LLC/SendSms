@@ -13,6 +13,10 @@ class MainCubit extends Cubit<MainState> {
 
   int currentpage = 0;
 
+  changeCurrentPage(int i){
+   currentpage = i;
+   emit(StateFlag3());
+  }
   bool serLoc = true;
   int serverChek  = 1;
   pages(int index) {
@@ -23,8 +27,11 @@ class MainCubit extends Cubit<MainState> {
       emit(StateFlag2());
     } else if (index == 2) {
       emit(StateFlag3());
+    } else if (index == 3) {
+      emit(StateFlag4());
     } 
   }
+
 
 
   changeSmsView(bool trueFalse){

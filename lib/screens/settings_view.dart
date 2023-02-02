@@ -26,7 +26,7 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:Text("Settings: Ip address > ${urlIndexBox.read("url_index")}")),
+      appBar: AppBar(title:Text("Ip address > ${urlIndexBox.read("url_index")}")),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(28.0.r),
@@ -69,7 +69,7 @@ class _SettingsViewState extends State<SettingsView> {
                   valueListenable: Boxes.getUrllList().listenable(),
                   builder: ((context, box, _) {
                     final urls = box.values.toList().cast<UrllList>();
-
+                     
                     return buildContent(urls);
                   }))
             ],

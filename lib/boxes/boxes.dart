@@ -14,6 +14,12 @@ class SmsBoxes {
   }
 }
 
+class SmsArxivBoxes {
+  static Box<Datas> getArxivDataList(){
+    return Hive.box<Datas>("arxiv_model");
+  }
+}
+
 // class SmsNewBoxes {
 //   static Box<Datas> getSmsDataList(){
 //     return Hive.box<Datas>("data_model");

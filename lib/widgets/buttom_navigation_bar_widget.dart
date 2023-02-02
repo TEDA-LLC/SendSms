@@ -31,13 +31,23 @@ class BottomNavigationBarWidget extends StatelessWidget {
             label: 'Sms',
             backgroundColor:Colors.greenAccent,
           ),
-         
           BottomNavigationBarItem(
+              icon: Icon(Icons.send,
+                  // color: currentPage == 2
+                  //     ? ColorConst.knavigationPressed
+                  //     : ColorConst.knavigationUnpressed,
+                      size:currentPage == 1
+                  ? 35.h
+                  : 25.h,),
+              label: 'Yuborilganlar',
+            backgroundColor:Colors.redAccent,
+              ),
+               BottomNavigationBarItem(
               icon: Icon(Icons.folder,
                   // color: currentPage == 1
                   //     ? ColorConst.knavigationPressed
                   //     : ColorConst.knavigationUnpressed,
-                      size:currentPage == 1
+                      size:currentPage == 2
                   ? 35.h
                   : 25.h,),
               label: 'Arxiv',
@@ -49,12 +59,16 @@ class BottomNavigationBarWidget extends StatelessWidget {
                   // color: currentPage == 2
                   //     ? ColorConst.knavigationPressed
                   //     : ColorConst.knavigationUnpressed,
-                      size:currentPage == 2
+                      size:currentPage == 3
                   ? 35.h
                   : 25.h,),
               label: 'Sozlash',
             backgroundColor:Colors.redAccent,
               ),
+         
+         
+          
+                
            
         ]);
   }

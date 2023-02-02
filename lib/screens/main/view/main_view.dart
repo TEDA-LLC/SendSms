@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sendsms/screens/seded_smses.dart';
 import 'package:sendsms/screens/sms_view.dart';
 import 'package:sendsms/screens/main/cubit/main_cubit.dart';
 import 'package:sendsms/screens/main/state/main_state.dart';
@@ -28,10 +29,13 @@ class MainView extends StatelessWidget {
               return SmsView();
             } 
              else if (state is StateFlag2) {
-              return const SendSms();
+              return  SendedSmsesView();
             } else if (state is StateFlag3) {
-               return SettingsView();
+               return SendSms();
             }
+            else if (state is StateFlag4) {
+              return const SettingsView();
+            } 
           else{
             return Container();
           }

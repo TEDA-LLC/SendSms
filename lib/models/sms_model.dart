@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'sms_model.g.dart';
 
 @HiveType(typeId: 2)
-class SmsModel extends HiveObject{
+class SmsModel {
   @HiveField(0)
   String? message;
   @HiveField(1)
@@ -31,7 +31,7 @@ class SmsModel extends HiveObject{
 }
 
 @HiveType(typeId: 3)
-class Datas extends HiveObject{
+class Datas {
   @HiveField(0)
   int? id;
   @HiveField(1)
