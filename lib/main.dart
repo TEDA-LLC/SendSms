@@ -25,7 +25,6 @@ void main() async{
   await SmsService.openBoxDataModel();
   await Hive.openBox<Datas>("new_sms");
   await SmsService.openBox();
-
   await GetStorage.init();
   
   runApp(
@@ -57,6 +56,6 @@ class MyApp extends StatelessWidget {
             ),
             home:  MainView(),
           );
-        });
+    });
   }
 }

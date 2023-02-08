@@ -29,9 +29,9 @@ class MainView extends StatelessWidget {
               return SmsView();
             } 
              else if (state is StateFlag2) {
-              return  SendedSmsesView();
+              return SendSms();
             } else if (state is StateFlag3) {
-               return SendSms();
+               return  SendedSmsesView();
             }
             else if (state is StateFlag4) {
               return const SettingsView();

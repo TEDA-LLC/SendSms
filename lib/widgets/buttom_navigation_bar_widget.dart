@@ -32,7 +32,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             backgroundColor:Colors.greenAccent,
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.send,
+              icon: Icon(Icons.folder,
                   // color: currentPage == 2
                   //     ? ColorConst.knavigationPressed
                   //     : ColorConst.knavigationUnpressed,
@@ -43,7 +43,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             backgroundColor:Colors.redAccent,
               ),
                BottomNavigationBarItem(
-              icon: Icon(Icons.folder,
+              icon: Icon(Icons.send,
                   // color: currentPage == 1
                   //     ? ColorConst.knavigationPressed
                   //     : ColorConst.knavigationUnpressed,

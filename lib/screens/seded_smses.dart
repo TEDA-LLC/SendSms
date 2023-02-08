@@ -61,7 +61,9 @@ var box;
                         }, child:const Text("Serverni yangilash")),
                      ElevatedButton(
                         onPressed: () async {
+
                           SmsService.boxArxivClear();
+                          
                         }, child:const Text("Arxivni tozalash")),
                   ],
                 ),

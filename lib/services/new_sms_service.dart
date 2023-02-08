@@ -11,8 +11,9 @@ class SmsService {
   static Box<Datas>? boxDataModel;
   static Box<Datas>? boxArxivModel;
   static List<Datas> list = [];
+  static List<Datas> list1 = [];
   static Future<List<Datas>?> getSmsFlag1(
-    String url, BuildContext context) async {
+      String url, BuildContext context) async {
     try {
       Response res =
           await Dio().get('http://$url:8081/application/json/sms/?del_flag=1');
@@ -55,6 +56,7 @@ class SmsService {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     Hive.init(appDocDir.path);
   }
+
   static openBoxArxivModel() async {
     boxArxivModel = await Hive.openBox('arxiv_model');
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -73,11 +75,13 @@ class SmsService {
       await boxDataModel!.add(item);
     }
   }
+
   static putArxivData(List<Datas> data) async {
     for (var item in data) {
       await boxArxivModel!.add(item);
     }
   }
+
   static boxClear() async {
     await box!.clear();
   }
@@ -90,40 +94,38 @@ class SmsService {
     await boxArxivModel!.clear();
   }
 
-
   static var telephony = Telephony.instance;
   static sendingSms(BuildContext context, String url) async {
     List dataId = [];
     int spy = 0;
     if (boxDataModel != null && boxDataModel!.isNotEmpty) {
       for (var i = 0; i < boxDataModel!.length; i++) {
-        if(boxDataModel!.getAt(i)!.flag == 2 ){
-        await telephony.sendSms(
-            to: boxDataModel!.getAt(i)!.tel.toString(),
-            message: boxDataModel!.getAt(i)!.zapros.toString());
-            boxDataModel!.getAt(i)!.flag = 4;
+        if (boxDataModel!.getAt(i)!.flag == 2) {
+          await telephony.sendSms(
+              to: boxDataModel!.getAt(i)!.tel.toString(),
+              message: boxDataModel!.getAt(i)!.zapros.toString());
+          boxDataModel!.getAt(i)!.flag = 4;
         }
         debugPrint(i.toString());
-        
+
         debugPrint(boxDataModel!.getAt(i)!.flag.toString());
         dataId.add(boxDataModel!.getAt(i)!.id);
-        spy ++;
+        spy++;
       }
       //agar list of id jo'natilsa, true qaytmasa telefon bazasiga yozish
       try {
         Response response = await Dio()
             .put("http://$url:8081/application/json/sms", data: dataId);
-          print(response.data);
-       
-          // ignore: use_build_context_synchronously
+        print(response.data);
+
+        // ignore: use_build_context_synchronously
         showSnackBar(context, "Malumotlar yangilandi", Colors.green);
         for (var i = 0; i < boxDataModel!.length; i++) {
-         list.add(boxDataModel!.getAt(i) ?? Datas());
+          list.add(boxDataModel!.getAt(i) ?? Datas());
         }
         debugPrint("Arxiv >>>> ${list.toString()}");
         await putArxivData(list);
         boxLocalClear();
-
       } catch (e) {
         debugPrint("Server yangilanmadi ERROR >>> $e");
         // ignore: use_build_context_synchronously
@@ -137,11 +139,11 @@ class SmsService {
     }
   }
 
-  static renewServer (BuildContext context,url)async{
+  static renewServer(BuildContext context, url) async {
     List dataId = [];
     if (boxDataModel != null && boxDataModel!.isNotEmpty) {
       for (var i = 0; i < boxDataModel!.length; i++) {
-        if(boxDataModel!.getAt(i)!.flag == 4){
+        if (boxDataModel!.getAt(i)!.flag == 4) {
           dataId.add(boxDataModel!.getAt(i)!.id);
         }
       }
@@ -150,24 +152,25 @@ class SmsService {
             .put("http://$url:8081/application/json/sms", data: dataId);
         print(response.data);
         for (var i = 0; i < boxDataModel!.length; i++) {
-          boxDataModel!.getAt(i)!.flag = 5;
+          if (boxDataModel!.getAt(i)!.flag == 4) {
+            boxDataModel!.getAt(i)!.flag = 3;
+            list1.add(boxDataModel!.getAt(i) ?? Datas());
+          }
         }
-        
-          // ignore: use_build_context_synchronously
-          showSnackBar(context, "Malumotlar yangilandi", Colors.green);
-          
-        
+        putArxivData(list1);
+
+        // ignore: use_build_context_synchronously
+        showSnackBar(context, "Malumotlar yangilandi", Colors.green);
       } catch (e) {
         debugPrint("Server yangilanmadi ERROR >>> $e");
         // ignore: use_build_context_synchronously
         showSnackBar(context, "Server yangilanmadi", Colors.red);
       }
-      } else{
-        showSnackBar(context, "Sms yo'q", Colors.amber);
-      }
-    
-    
+    } else {
+      showSnackBar(context, "Sms yo'q", Colors.amber);
+    }
   }
+
   static showSnackBar(BuildContext context, String content, Color color) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(content),
