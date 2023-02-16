@@ -10,6 +10,7 @@ import 'package:sendsms/models/sms_model.dart';
 import 'package:sendsms/screens/main/cubit/main_cubit.dart';
 import 'package:sendsms/services/new_sms_service.dart';
 import 'package:telephony/telephony.dart';
+import 'package:workmanager/workmanager.dart';
 
 class SmsView extends StatefulWidget {
   const SmsView({super.key});
@@ -18,6 +19,8 @@ class SmsView extends StatefulWidget {
   State<SmsView> createState() => _SmsViewState();
 }
 
+ var index = GetStorage();
+ bool index0 = false;
 final telephony = Telephony.instance;
 var urlBox = GetStorage();
 List<Datas>? _smsData;
@@ -28,17 +31,43 @@ Box<Datas>? smsBox;
 dynamic smsDataVariable;
 bool serLoc = true;
 
-class _SmsViewState extends State<SmsView> {
+class _SmsViewState extends State<SmsView> with WidgetsBindingObserver{
   @override
   void initState() {
     url = urlBox.read("url_index").toString();
-    //box = Hive.box("data_model");
-    if (box != null) {
-      smsDataVariable = box.get("data_model");
-    }
+    WidgetsBinding.instance.addObserver(this);
+    Workmanager().cancelAll();
+    index0 = index.read("index0") ?? false;
+     url = urlBox.read("url_index").toString();
     super.initState();
   }
+   
+    @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    super.didChangeAppLifecycleState(state);
 
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) return;
+
+    final isBackground = state == AppLifecycleState.paused;
+
+    if (isBackground) {
+      print("true");
+      if(index0){
+        // await SmsService.getSmsFlag1(url, context);
+        // ignore: use_build_context_synchronously
+        // await SmsService.sendingSms(context, url);
+        await Workmanager().registerOneOffTask(
+                'taskName',
+                "Smslar avtomatik jo'natiliyabdi",
+              );
+        print("index 0  true");
+      }
+    } else {
+     print("false");
+    Workmanager().cancelAll();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     serLoc = context.watch<MainCubit>().serLoc;
@@ -89,7 +118,6 @@ class _SmsViewState extends State<SmsView> {
                         onPressed: () async {
                           await SmsService.sendingSms(context, url);
                           setState(() {
-                            
                           });
                         },
                         child: const Text("Smslarni jo'natish")),

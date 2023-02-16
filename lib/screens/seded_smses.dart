@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hive/hive.dart';
@@ -8,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/sms_model.dart';
 import 'package:sendsms/services/new_sms_service.dart';
+import 'package:workmanager/workmanager.dart';
 
 
 class SendedSmsesView extends StatefulWidget {
@@ -17,15 +16,53 @@ class SendedSmsesView extends StatefulWidget {
   State<SendedSmsesView> createState() => _SendedSmsesViewState();
 }
 
-class _SendedSmsesViewState extends State<SendedSmsesView> {
-var urlIndexBox = GetStorage();
-dynamic smsDataVariable;
-var box;
+class _SendedSmsesViewState extends State<SendedSmsesView> with WidgetsBindingObserver{
+    var urlIndexBox = GetStorage();
+    var index = GetStorage();
+    bool index0 = false;
+    dynamic smsDataVariable;
+    var box;
+    String url = "";
   @override
   void initState() {
-    
+    url = urlIndexBox.read("url_index").toString();
+    WidgetsBinding.instance.addObserver(this);
+    Workmanager().cancelAll();
+    index0 = index.read("index0") ?? false;
+    url = urlIndexBox.read("url_index").toString();
     super.initState();
   }
+
+
+@override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    super.didChangeAppLifecycleState(state);
+
+
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) return;
+
+
+
+    final isBackground = state == AppLifecycleState.paused;
+    if (isBackground) {
+      print("true");
+      if(index0){
+        // await SmsService.getSmsFlag1(url, context);
+        // ignore: use_build_context_synchronously
+        // await SmsService.sendingSms(context, url);
+        await Workmanager().registerOneOffTask(
+                'taskName',
+                "Smslar avtomatik jo'natiliyabdi",
+              );
+        print("index 0  true");
+      }
+    } else {
+     print("false");
+    Workmanager().cancelAll();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

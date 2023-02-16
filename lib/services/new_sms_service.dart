@@ -12,8 +12,7 @@ class SmsService {
   static Box<Datas>? boxArxivModel;
   static List<Datas> list = [];
   static List<Datas> list1 = [];
-  static Future<List<Datas>?> getSmsFlag1(
-      String url, BuildContext context) async {
+  static Future<List<Datas>?> getSmsFlag1(String url, BuildContext context) async {
     try {
       Response res =
           await Dio().get('http://$url:8081/application/json/sms/?del_flag=1');
@@ -25,21 +24,18 @@ class SmsService {
       if (f.isNotEmpty) {
         await putLocalData(f);
         // await putData(f);
-
         debugPrint("Flag 1 data added");
         // ignore: use_build_context_synchronously
         showSnackBar(context, "$newSmsNum ta sms qo'shildi", Colors.green);
         // context.read<MainCubit>().changeSmsView(false);
       } else {
         debugPrint("Flag 1 data empty");
-
         // ignore: use_build_context_synchronously
         showSnackBar(context, "Yuklash uchun ma'lumot yo'q", Colors.amber);
       }
       return f;
     } catch (e) {
       debugPrint("flag 1 catch >> $e");
-
       // ignore: use_build_context_synchronously
       showSnackBar(context, "Yuklashda xatolik yuz berdi", Colors.red);
     }
@@ -177,5 +173,68 @@ class SmsService {
       backgroundColor: color,
       action: SnackBarAction(label: "Hide", onPressed: () {}),
     ));
+  }
+
+
+
+
+  static Future<List<Datas>?> getSmsFlag1back(String url) async {
+    try {
+      Response res =
+          await Dio().get('http://$url:8081/application/json/sms/?del_flag=1');
+      var d = res.data;
+      List<Datas> f =
+          (d["data"] as List).map((e) => Datas.fromJson(e)).toList();
+      print(d);
+      int newSmsNum = f.length;
+      if (f.isNotEmpty) {
+        await putLocalData(f);
+        // await putData(f);
+        debugPrint("Flag 1 data added");
+       
+        // context.read<MainCubit>().changeSmsView(false);
+      } else {
+        debugPrint("Flag 1 data empty");
+      }
+      return f;
+    } catch (e) {
+      debugPrint("flag 1 catch >> $e");
+    }
+  }
+
+  static sendingSmsback(String url) async {
+    List dataId = [];
+    int spy = 0;
+    if (boxDataModel != null && boxDataModel!.isNotEmpty) {
+      for (var i = 0; i < boxDataModel!.length; i++) {
+        if (boxDataModel!.getAt(i)!.flag == 2) {
+          await telephony.sendSms(
+              to: boxDataModel!.getAt(i)!.tel.toString(),
+              message: boxDataModel!.getAt(i)!.zapros.toString());
+          boxDataModel!.getAt(i)!.flag = 4;
+        }
+        debugPrint(i.toString());
+
+        debugPrint(boxDataModel!.getAt(i)!.flag.toString());
+        dataId.add(boxDataModel!.getAt(i)!.id);
+        spy++;
+      }
+      //agar list of id jo'natilsa, true qaytmasa telefon bazasiga yozish
+      try {
+        Response response = await Dio()
+            .put("http://$url:8081/application/json/sms", data: dataId);
+        print(response.data);
+        for (var i = 0; i < boxDataModel!.length; i++) {
+          list.add(boxDataModel!.getAt(i) ?? Datas());
+        }
+        debugPrint("Arxiv >>>> ${list.toString()}");
+        await putArxivData(list);
+        boxLocalClear();
+      } catch (e) {
+        debugPrint("Server yangilanmadi ERROR >>> $e");
+      }
+      spy = 0;
+    } else {
+    }
   }
 }
