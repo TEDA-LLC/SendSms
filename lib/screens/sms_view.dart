@@ -25,6 +25,7 @@ var urlBox = GetStorage();
 List<Datas>? _smsData;
 int smsLength = 0;
 String url = "";
+String smsLimt = "";
 var box;
 Box<Datas>? smsBox;
 dynamic smsDataVariable;
@@ -34,6 +35,7 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
   @override
   void initState() {
     url = urlBox.read("url_index").toString();
+    smsLimt = urlBox.read("sms_limt").toString();
     WidgetsBinding.instance.addObserver(this);
     Workmanager().cancelAll();
     index0 = index.read("index0") ?? false;
@@ -72,7 +74,16 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     serLoc = context.watch<MainCubit>().serLoc;
     return Scaffold(
-      appBar: AppBar(title: Text("New IP > $url")),
+      //appBar: AppBar(title: Text("New IP > $url")),
+      appBar: AppBar(title:
+          Row(
+            children: [
+              Text("New IP > $url"),
+              Expanded(child: Container()),
+              Text("$smsLimt sms limit"),
+            ],
+          ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 40.0.r),

@@ -78,7 +78,7 @@ class _SettingsViewState extends State<SettingsView>
               width: 80.w,
               color: Colors.white10,
               child: const Center(
-                child: Icon(Icons.edit),
+                child: Icon(Icons.sms),
               ),
               // child: TextFormField(),
             ),
