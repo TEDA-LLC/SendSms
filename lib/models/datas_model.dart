@@ -37,5 +37,4 @@ class Datas {
     flag = json['flag'];
     sana = json['sana'];
   }
-
 }

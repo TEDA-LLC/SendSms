@@ -1,5 +1,5 @@
-
 import 'package:hive/hive.dart';
+
 part 'sms_model.g.dart';
 
 @HiveType(typeId: 2)
@@ -26,8 +26,6 @@ class SmsModel {
       });
     }
   }
-
- 
 }
 
 @HiveType(typeId: 3)
@@ -65,5 +63,4 @@ class Datas {
     flag = json['flag'];
     sana = json['sana'];
   }
-
 }
