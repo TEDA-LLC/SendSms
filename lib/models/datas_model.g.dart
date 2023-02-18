@@ -57,3 +57,4 @@ class DatasAdapter extends TypeAdapter<Datas> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+

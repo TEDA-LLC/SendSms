@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/url_list_model.dart';
@@ -21,6 +20,7 @@ class _SettingsViewState extends State<SettingsView>
   bool index1 = false;
   bool index2 = false;
   String url = "";
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -61,12 +61,13 @@ class _SettingsViewState extends State<SettingsView>
   var urlIndexBox = GetStorage();
 
   TextEditingController urlController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Container(
-        color: Colors.red,
+        color: Colors.white10,
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text("Ip address > ${urlIndexBox.read("url_index")}"),
@@ -74,7 +75,7 @@ class _SettingsViewState extends State<SettingsView>
             child: Container(
               height: 50.h,
               width: 80.w,
-              color: Colors.green,
+              color: Colors.black54,
               // child: TextFormField(),
             ),
             onTap: () {
@@ -83,24 +84,26 @@ class _SettingsViewState extends State<SettingsView>
                 builder: ((context) => AlertDialog(
                       title: Text("Sms limitingizni kiriting"),
                       content: TextFormField(),
-                      actions: [TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),],
+                      actions: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          child: const Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          child: const Text('Ok'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
                     )),
               );
             },
@@ -169,7 +172,7 @@ class _SettingsViewState extends State<SettingsView>
                                   value: index0,
                                   onChanged: ((bool value) async {
                                     index0 = value;
-                                     await index.write("index0", value);
+                                    await index.write("index0", value);
                                     debugPrint(index.read("index0").toString());
                                     setState(() {});
                                   })),

@@ -22,28 +22,29 @@ class SendSms extends StatefulWidget {
   _SendSmsState createState() => _SendSmsState();
 }
 
-class _SendSmsState extends State<SendSms> with WidgetsBindingObserver{
+class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
   String _message = "";
   final telephony = Telephony.instance;
 
   var urlBox = GetStorage();
   var index = GetStorage();
-  bool index0=false;
+  bool index0 = false;
   String? url;
+
   @override
   void initState() {
     print(urlBox.read('url_index'));
     url = urlBox.read("url_index").toString();
-     
+
     WidgetsBinding.instance.addObserver(this);
     Workmanager().cancelAll();
     index0 = index.read("index0") ?? false;
-  
+
     super.initState();
   }
-   
-    @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async{
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.inactive ||
@@ -53,19 +54,19 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver{
 
     if (isBackground) {
       print("true");
-      if(index0){
+      if (index0) {
         // await SmsService.getSmsFlag1(url, context);
         // ignore: use_build_context_synchronously
         // await SmsService.sendingSms(context, url);
         await Workmanager().registerOneOffTask(
-                "taskName",
-                "Smslar avtomatik jo'natiliyabdi",
-              );
+          "taskName",
+          "Smslar avtomatik jo'natiliyabdi",
+        );
         print("index 0  true");
       }
     } else {
-     print("false");
-    Workmanager().cancelAll();
+      print("false");
+      Workmanager().cancelAll();
     }
   }
 
@@ -87,12 +88,11 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver{
             ValueListenableBuilder<Box<Datas>>(
                 valueListenable: SmsBoxes.getSmsDataList().listenable(),
                 builder: ((context, box, _) {
-
                   final datas = box.values.toList().cast<Datas>();
                   final List<Datas> data = [];
                   for (var i = 0; i < datas.length; i++) {
-                    if(datas[i].flag == 4){
-                     data.add(datas[i]);
+                    if (datas[i].flag == 4) {
+                      data.add(datas[i]);
                     }
                   }
                   return buildContent(data);
@@ -105,12 +105,13 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver{
                 children: [
                   ElevatedButton(
                       onPressed: () async {
-                       await SmsService.renewServer(context, url);
-                      }, child: Text("Serverni yangilash"))
+                        await SmsService.renewServer(context, url);
+                      },
+                      child: Text("Serverni yangilash"))
                 ],
               ),
             ),
-        
+
             const Center(),
           ],
         ),
