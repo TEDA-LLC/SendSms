@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/sms_model.dart';
@@ -136,11 +135,11 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
       return Container(
         height: 620.h,
         width: 380.w,
-        color: Colors.blueAccent.shade400,
+        color: Colors.blueAccent.shade100,
         child: const Center(
           child: Text(
             'Smslarni yuklang',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
       );

@@ -61,6 +61,7 @@ class _SettingsViewState extends State<SettingsView>
   var urlIndexBox = GetStorage();
 
   TextEditingController urlController = TextEditingController();
+  TextEditingController smsLimtController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,10 @@ class _SettingsViewState extends State<SettingsView>
             child: Container(
               height: 50.h,
               width: 80.w,
-              color: Colors.black54,
+              color: Colors.white10,
+              child: const Center(
+                child: Icon(Icons.edit),
+              ),
               // child: TextFormField(),
             ),
             onTap: () {
@@ -83,7 +87,9 @@ class _SettingsViewState extends State<SettingsView>
                 context: context,
                 builder: ((context) => AlertDialog(
                       title: Text("Sms limitingizni kiriting"),
-                      content: TextFormField(),
+                      content: TextFormField(
+                        controller: smsLimtController,
+                      ),
                       actions: [
                         TextButton(
                           style: TextButton.styleFrom(
