@@ -107,6 +107,9 @@ class _SettingsViewState extends State<SettingsView>
                           child: const Text('Ok'),
                           onPressed: () {
                             Navigator.of(context).pop();
+                            //save sms limit getstorage
+                            urlIndexBox.write("sms_limt", smsLimtController.text);
+                            setState(() {});
                           },
                         ),
                       ],
