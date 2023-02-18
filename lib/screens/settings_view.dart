@@ -14,25 +14,25 @@ class SettingsView extends StatefulWidget {
   State<SettingsView> createState() => _SettingsViewState();
 }
 
-class _SettingsViewState extends State<SettingsView> with WidgetsBindingObserver{
+class _SettingsViewState extends State<SettingsView>
+    with WidgetsBindingObserver {
   var index = GetStorage();
   bool index0 = false;
   bool index1 = false;
   bool index2 = false;
-  String url ="";
+  String url = "";
   @override
   void initState() {
- WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     Workmanager().cancelAll();
     index0 = index.read("index0") ?? false;
-     url = urlIndexBox.read("url_index").toString();
-    
+    url = urlIndexBox.read("url_index").toString();
+
     super.initState();
   }
 
-
-   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async{
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.inactive ||
@@ -42,30 +42,71 @@ class _SettingsViewState extends State<SettingsView> with WidgetsBindingObserver
 
     if (isBackground) {
       print("true");
-      if(index.read("index0") == true){
+      if (index.read("index0") == true) {
         // await SmsService.getSmsFlag1(url, context);
         // ignore: use_build_context_synchronously
         // await SmsService.sendingSms(context, url);
         await Workmanager().registerPeriodicTask(
-                'taskName',
-                "Smslar avtomatik jo'natiliyabdi",
-              );
+          'taskName',
+          "Smslar avtomatik jo'natiliyabdi",
+        );
         print("index 0  true");
       }
     } else {
-     print("false");
-    Workmanager().cancelAll();
-
+      print("false");
+      Workmanager().cancelAll();
     }
   }
+
   var urlIndexBox = GetStorage();
 
   TextEditingController urlController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text("Ip address > ${urlIndexBox.read("url_index")}")),
+      appBar: AppBar(
+          title: Container(
+        color: Colors.red,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text("Ip address > ${urlIndexBox.read("url_index")}"),
+          GestureDetector(
+            child: Container(
+              height: 50.h,
+              width: 80.w,
+              color: Colors.green,
+              // child: TextFormField(),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: ((context) => AlertDialog(
+                      title: Text("Sms limitingizni kiriting"),
+                      content: TextFormField(),
+                      actions: [TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),],
+                    )),
+              );
+            },
+          )
+        ]),
+      )),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(28.0.r),
@@ -126,12 +167,10 @@ class _SettingsViewState extends State<SettingsView> with WidgetsBindingObserver
                             children: [
                               Switch(
                                   value: index0,
-                                  onChanged: ((bool value) async{ 
+                                  onChanged: ((bool value) async {
                                     index0 = value;
-                                    await index.write("index0", value);
-                                    print(index.read("index0"));
-                                    if(index0==true)
-                                    showSnackBar("Smslar avtomatik", Colors.purpleAccent);
+                                     await index.write("index0", value);
+                                    debugPrint(index.read("index0").toString());
                                     setState(() {});
                                   })),
                               Text("Avtomatik ishlash")

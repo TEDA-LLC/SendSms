@@ -12,10 +12,11 @@ class SmsService {
   static Box<Datas>? boxArxivModel;
   static List<Datas> list = [];
   static List<Datas> list1 = [];
-  static Future<List<Datas>?> getSmsFlag1(String url, BuildContext context) async {
+  
+  static Future<List<Datas>?> getSmsFlag1(String url, {BuildContext? context}) async {
     try {
       Response res =
-          await Dio().get('http://$url:8081/application/json/sms/?del_flag=1');
+          await Dio().get('http://$url:8081/application/json/sms?del_flag=1');
       var d = res.data;
       List<Datas> f =
           (d["data"] as List).map((e) => Datas.fromJson(e)).toList();
@@ -26,18 +27,50 @@ class SmsService {
         // await putData(f);
         debugPrint("Flag 1 data added");
         // ignore: use_build_context_synchronously
+        if(context!=null)
         showSnackBar(context, "$newSmsNum ta sms qo'shildi", Colors.green);
         // context.read<MainCubit>().changeSmsView(false);
       } else {
         debugPrint("Flag 1 data empty");
         // ignore: use_build_context_synchronously
-        showSnackBar(context, "Yuklash uchun ma'lumot yo'q", Colors.amber);
+        if(context!=null)
+         showSnackBar(context, "Yuklash uchun ma'lumot yo'q", Colors.amber);
       }
       return f;
     } catch (e) {
-      debugPrint("flag 1 catch >> $e");
-      // ignore: use_build_context_synchronously
+      debugPrint("flag 1 back catch >> $e");
+        if(context!=null){
+      //ignore: use_build_context_synchronously
       showSnackBar(context, "Yuklashda xatolik yuz berdi", Colors.red);
+      }
+    }
+  }
+
+static Future<List<Datas>?> getSmsFlag1back(String url) async {
+    try {
+      Response res =
+          await Dio().get('http://$url:8081/application/json/sms/?del_flag=1');
+      var d = res.data;
+      print(d); 
+      List<Datas> f = (d["data"] as List).map((e) => Datas.fromJson(e)).toList();
+          print("FF111 ");
+
+      // int newSmsNum = f.length;
+      // if (true) {
+        // debugPrint("if");
+        await putLocalData(f);
+          
+        // await putData(f);
+        debugPrint("Flag 1 data added");
+       
+        // context.read<MainCubit>().changeSmsView(false);
+      // }
+      //  else {
+      //   debugPrint("Flag 1 data empty");
+      // }
+      // return f;
+    } catch (e) {
+      debugPrint("flag 1 catch >> $e");
     }
   }
 
@@ -178,40 +211,19 @@ class SmsService {
 
 
 
-  static Future<List<Datas>?> getSmsFlag1back(String url) async {
-    try {
-      Response res =
-          await Dio().get('http://$url:8081/application/json/sms/?del_flag=1');
-      var d = res.data;
-      List<Datas> f =
-          (d["data"] as List).map((e) => Datas.fromJson(e)).toList();
-      print(d);
-      int newSmsNum = f.length;
-      if (f.isNotEmpty) {
-        await putLocalData(f);
-        // await putData(f);
-        debugPrint("Flag 1 data added");
-       
-        // context.read<MainCubit>().changeSmsView(false);
-      } else {
-        debugPrint("Flag 1 data empty");
-      }
-      return f;
-    } catch (e) {
-      debugPrint("flag 1 catch >> $e");
-    }
-  }
-
+  
   static sendingSmsback(String url) async {
     List dataId = [];
     int spy = 0;
     if (boxDataModel != null && boxDataModel!.isNotEmpty) {
+      debugPrint("send if");
       for (var i = 0; i < boxDataModel!.length; i++) {
         if (boxDataModel!.getAt(i)!.flag == 2) {
           await telephony.sendSms(
               to: boxDataModel!.getAt(i)!.tel.toString(),
               message: boxDataModel!.getAt(i)!.zapros.toString());
           boxDataModel!.getAt(i)!.flag = 4;
+          print("somthing");
         }
         debugPrint(i.toString());
 
@@ -235,6 +247,7 @@ class SmsService {
       }
       spy = 0;
     } else {
+      print("empty else");
     }
   }
 }

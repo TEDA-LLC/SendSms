@@ -178,7 +178,7 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver{
 
   Future getDataFlag1(String url, BuildContext context) async {
     try {
-      SmsService.getSmsFlag1(url, context).then((value) {
+      SmsService.getSmsFlag1(url,context: context).then((value) {
         return setState(() {});
       });
     } catch (e) {
