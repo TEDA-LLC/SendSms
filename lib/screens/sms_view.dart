@@ -124,7 +124,6 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-              Center(),
             ],
           ),
         ),
@@ -137,11 +136,11 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
       return Container(
         height: 620.h,
         width: 380.w,
-        color: Colors.blueAccent.shade100,
+        color: Colors.blueAccent.shade400,
         child: const Center(
           child: Text(
             'Smslarni yuklang',
-            style: TextStyle(fontSize: 24),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white),
           ),
         ),
       );
