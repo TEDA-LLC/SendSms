@@ -68,27 +68,47 @@ class _SettingsViewState extends State<SettingsView>
     return Scaffold(
       appBar: AppBar(
           title: Container(
-        color: Colors.white10,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text("Ip address > ${urlIndexBox.read("url_index")}"),
-          GestureDetector(
-            child: Container(
-              height: 50.h,
-              width: 80.w,
-              color: Colors.white10,
-              child: const Center(
-                child: Icon(Icons.sms),
-              ),
-              // child: TextFormField(),
-            ),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: ((context) => AlertDialog(
-                      title: Text("Sms limitingizni kiriting"),
-                      content: TextFormField(
-                        controller: smsLimtController,
+            color: Colors.white10,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text("Ip address > ${urlIndexBox.read("url_index")}"),
+              GestureDetector(
+                child: Container(
+                  height: 50.h,
+                  width: 80.w,
+                  color: Colors.white10,
+                  child: Center(
+                    child: Text(
+                        "${urlIndexBox.read("sms_limt")}"),
+                  ),
+                  // child: TextFormField(),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: ((context) => AlertDialog(
+                      //title: Text("Sms limitingizni kiriting"),
+                      title: Column(
+                        children: [
+                          Text(
+                              "Sms limitingiz: ${urlIndexBox.read("sms_limt")}"),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Text("Sms limitingizni kiriting"),
+                        ],
+                      ),
+                      content: SizedBox(
+                        height: 100.h,
+                        width: 100.w,
+                        //textfild hint getstorage sms limit and input type number
+                        child: TextFormField(
+                          controller: smsLimtController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: urlIndexBox.read("sms_limt").toString(),
+                          ),
+                        ),
                       ),
                       actions: [
                         TextButton(
@@ -97,6 +117,7 @@ class _SettingsViewState extends State<SettingsView>
                           ),
                           child: const Text('Cancel'),
                           onPressed: () {
+                            smsLimtController.clear();
                             Navigator.of(context).pop();
                           },
                         ),
@@ -106,19 +127,25 @@ class _SettingsViewState extends State<SettingsView>
                           ),
                           child: const Text('Ok'),
                           onPressed: () {
-                            Navigator.of(context).pop();
-                            //save sms limit getstorage
-                            urlIndexBox.write("sms_limt", smsLimtController.text);
+
+                            if (smsLimtController.text.isNotEmpty && int.parse(smsLimtController.text) < 9999){
+                              urlIndexBox.write(
+                                  "sms_limt", smsLimtController.text);
+                              smsLimtController.clear();
+                              Navigator.of(context).pop();
+                            } else{
+                              showSnackBar("son keriting yoki miqdor juda ko`p", Colors.red);
+                            }
                             setState(() {});
                           },
                         ),
                       ],
                     )),
-              );
-            },
-          )
-        ]),
-      )),
+                  );
+                },
+              )
+            ]),
+          )),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(28.0.r),
@@ -252,7 +279,7 @@ class _SettingsViewState extends State<SettingsView>
         height: 60.h,
         width: 350.w,
         child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           SizedBox(height: 20.h, width: 300.w, child: Text(url.url)),
           IconButton(
               onPressed: () {
