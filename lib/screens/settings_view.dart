@@ -128,7 +128,7 @@ class _SettingsViewState extends State<SettingsView>
                           child: const Text('Ok'),
                           onPressed: () {
 
-                            if (smsLimtController.text.isNotEmpty && int.parse(smsLimtController.text) < 9999){
+                            if (smsLimtController.text.isNotEmpty && smsLimtController.text.length < 6){
                               urlIndexBox.write(
                                   "sms_limt", smsLimtController.text);
                               smsLimtController.clear();
