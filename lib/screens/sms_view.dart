@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/sms_model.dart';
@@ -26,6 +25,7 @@ var urlBox = GetStorage();
 List<Datas>? _smsData;
 int smsLength = 0;
 String url = "";
+String smsLimt = "";
 var box;
 Box<Datas>? smsBox;
 dynamic smsDataVariable;
@@ -35,6 +35,7 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
   @override
   void initState() {
     url = urlBox.read("url_index").toString();
+    smsLimt = urlBox.read("sms_limt").toString();
     WidgetsBinding.instance.addObserver(this);
     Workmanager().cancelAll();
     index0 = index.read("index0") ?? false;
@@ -73,7 +74,16 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     serLoc = context.watch<MainCubit>().serLoc;
     return Scaffold(
-      appBar: AppBar(title: Text("New IP > $url")),
+      //appBar: AppBar(title: Text("New IP > $url")),
+      appBar: AppBar(title:
+          Row(
+            children: [
+              Text("New IP > $url"),
+              Expanded(child: Container()),
+              Text("$smsLimt sms limit"),
+            ],
+          ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 40.0.r),
@@ -136,11 +146,11 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
       return Container(
         height: 620.h,
         width: 380.w,
-        color: Colors.blueAccent.shade400,
+        color: Colors.blueAccent.shade100,
         child: const Center(
           child: Text(
             'Smslarni yuklang',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,color: Colors.white),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
       );
