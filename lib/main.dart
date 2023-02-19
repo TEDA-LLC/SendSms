@@ -14,25 +14,29 @@ import 'package:workmanager/workmanager.dart';
 
 import 'screens/main/cubit/main_cubit.dart';
 
+
+
 void callbackDispatcher() {
   var urlBox = GetStorage();
-  Workmanager().executeTask((taskName, inputData) async {
-    for (var i = 0; i < 2880; i++) {
-      await Future.delayed(const Duration(seconds: 5));
-      // ignore: use_build_context_synchronously
-      await SmsService.getSmsFlag1(urlBox.read("url_index"));
-      print("1");
-      await Future.delayed(const Duration(seconds: 5));
-      // ignore: use_build_context_synchronously
-      await SmsService.sendingSmsback(urlBox.read("url_index"));
-      print("2");
-    }
-    return Future.value(true);
-  });
+    Workmanager().executeTask((taskName, inputData) async {
+         for (var i = 0; i < 2880; i++) {
+           await Future.delayed( const Duration(seconds: 5));
+           // ignore: use_build_context_synchronously
+            await SmsService.getSmsFlag1back(urlBox.read("url_index"));
+          print("1");
+           await Future.delayed( const Duration(seconds: 5));
+           // ignore: use_build_context_synchronously
+            await SmsService.sendingSmsback(urlBox.read("url_index"));
+          print("2");
+         }
+      return Future.value(true);
+    });    
 }
 
-Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+
+
+Future main() async{
+ WidgetsFlutterBinding.ensureInitialized();
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
   await Hive.initFlutter();
   Hive.registerAdapter(UrllListAdapter());
@@ -49,26 +53,24 @@ Future main() async {
   //   DeviceOrientation.portraitDown,
   // ]);
 
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (context) => MainCubit()),
-    ],
-    child: MyApp(),
-  ));
+  runApp(
+    MultiBlocProvider(providers: [BlocProvider(create: (context) => MainCubit()),],
+    child:   MyApp(),)
+   );
 }
+
 
 class MyApp extends StatelessWidget {
   var urlbox = GetStorage();
-
+  
   MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+     
     final url = urlbox.read("url_index");
-    url == null
-        ? context.read<MainCubit>().changeCurrentPage(2)
-        : context.read<MainCubit>().changeCurrentPage(0);
+    url== null ? context.read<MainCubit>().changeCurrentPage(2)  : context.read<MainCubit>().changeCurrentPage(0);
     return ScreenUtilInit(
         designSize: const Size(428, 926),
         minTextAdapt: true,
@@ -78,10 +80,10 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: Colors.teal,
             ),
-            home: MainView(),
+            home:  const MainView(),
           );
-        });
+    });
   }
 }

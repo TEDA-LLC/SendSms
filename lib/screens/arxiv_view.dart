@@ -22,29 +22,29 @@ class SendSms extends StatefulWidget {
   _SendSmsState createState() => _SendSmsState();
 }
 
-class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
+class _SendSmsState extends State<SendSms> with WidgetsBindingObserver{
   String _message = "";
   final telephony = Telephony.instance;
 
   var urlBox = GetStorage();
   var index = GetStorage();
-  bool index0 = false;
+  bool index0=false;
   String? url;
-
+    int? _IndecatorArxivsms;
   @override
   void initState() {
     print(urlBox.read('url_index'));
     url = urlBox.read("url_index").toString();
-
+     
     WidgetsBinding.instance.addObserver(this);
     Workmanager().cancelAll();
     index0 = index.read("index0") ?? false;
-
+  
     super.initState();
   }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+   
+    @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.inactive ||
@@ -54,19 +54,19 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
 
     if (isBackground) {
       print("true");
-      if (index0) {
+      if(index0){
         // await SmsService.getSmsFlag1(url, context);
         // ignore: use_build_context_synchronously
         // await SmsService.sendingSms(context, url);
         await Workmanager().registerOneOffTask(
-          "taskName",
-          "Smslar avtomatik jo'natiliyabdi",
-        );
+                "taskName",
+                "Smslar avtomatik jo'natiliyabdi",
+              );
         print("index 0  true");
       }
     } else {
-      print("false");
-      Workmanager().cancelAll();
+     print("false");
+    Workmanager().cancelAll();
     }
   }
 
@@ -75,6 +75,8 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBar(
         title: Text('Arxiv.  Ip > ${urlBox.read("url_index")}'),
+        elevation: 0,
+        
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -88,11 +90,12 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
             ValueListenableBuilder<Box<Datas>>(
                 valueListenable: SmsBoxes.getSmsDataList().listenable(),
                 builder: ((context, box, _) {
+
                   final datas = box.values.toList().cast<Datas>();
                   final List<Datas> data = [];
                   for (var i = 0; i < datas.length; i++) {
-                    if (datas[i].flag == 4) {
-                      data.add(datas[i]);
+                    if(datas[i].flag == 4){
+                     data.add(datas[i]);
                     }
                   }
                   return buildContent(data);
@@ -105,13 +108,12 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
                 children: [
                   ElevatedButton(
                       onPressed: () async {
-                        await SmsService.renewServer(context, url);
-                      },
-                      child: Text("Serverni yangilash"))
+                       await SmsService.renewServer(context, url);
+                      }, child: Text("Serverni yangilash"))
                 ],
               ),
             ),
-
+        
             const Center(),
           ],
         ),
@@ -127,7 +129,7 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
         color: Colors.blueAccent.shade100,
         child: const Center(
           child: Text(
-            "Arhive bo'sh",
+            "Arxiv bo'sh",
             style: TextStyle(fontSize: 24),
           ),
         ),
@@ -153,14 +155,62 @@ class _SendSmsState extends State<SendSms> with WidgetsBindingObserver {
     BuildContext context,
     Datas data,
   ) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.white,
-        child: Text(data.id.toString()),
-      ),
-      title: Text(data.flag.toString()),
-      subtitle: Text(data.zapros.toString()),
-    );
+  
+    return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 14),
+            child: AnimatedContainer(
+             decoration: BoxDecoration(
+              color: Colors.teal.shade100,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.teal.shade400,
+                  blurRadius: 2,
+                  spreadRadius: 2,
+                  offset:const Offset(-2, -2)
+
+                ),
+              const   BoxShadow(
+                  color: Colors.white,
+                  blurRadius: 2,
+                  spreadRadius: 4,
+                  offset: Offset(2, 2)
+
+                )
+              ]
+             ),
+                 duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOutBack,
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: Text(data.id.toString()),
+                    ),
+                    title: Text(data.flag.toString()),
+                    trailing: GestureDetector(
+                        onTap: () {
+                        
+                          setState(() {
+                           // ignore: unrelated_type_equality_checks
+                           if( _IndecatorArxivsms==index)
+                        { _IndecatorArxivsms=null;}
+                         else
+                          {_IndecatorArxivsms=index as int?;}
+                         
+                          });
+                        },
+                        // ignore: unrelated_type_equality_checks
+                        child: _IndecatorArxivsms==index
+                            ? const Icon(Icons.arrow_upward)
+                            : const Icon(Icons.arrow_downward)),
+                    subtitle: Text(
+                     data.zapros.toString(),
+                      // ignore: unrelated_type_equality_checks
+                      maxLines:_IndecatorArxivsms==index? debugFocusChanges.hashCode:3,
+                      style: const TextStyle(),
+                    ),
+                  ),
+                ),
+          );
   }
 
   showSnackBar(String content, Color color) {

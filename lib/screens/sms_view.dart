@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sendsms/boxes/boxes.dart';
 import 'package:sendsms/models/sms_model.dart';
@@ -18,33 +19,32 @@ class SmsView extends StatefulWidget {
   State<SmsView> createState() => _SmsViewState();
 }
 
-var index = GetStorage();
-bool index0 = false;
+ var index = GetStorage();
+ bool index0 = false;
 final telephony = Telephony.instance;
 var urlBox = GetStorage();
 List<Datas>? _smsData;
 int smsLength = 0;
 String url = "";
-String smsLimt = "";
 var box;
 Box<Datas>? smsBox;
 dynamic smsDataVariable;
 bool serLoc = true;
+ int? _selectIndecator;
 
-class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
+class _SmsViewState extends State<SmsView> with WidgetsBindingObserver{
   @override
   void initState() {
     url = urlBox.read("url_index").toString();
-    smsLimt = urlBox.read("sms_limt").toString();
     WidgetsBinding.instance.addObserver(this);
     Workmanager().cancelAll();
     index0 = index.read("index0") ?? false;
-    url = urlBox.read("url_index").toString();
+     url = urlBox.read("url_index").toString();
     super.initState();
   }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+   
+    @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.inactive ||
@@ -54,36 +54,30 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
 
     if (isBackground) {
       print("true");
-      if (index0) {
+      if(index0){
         // await SmsService.getSmsFlag1(url, context);
         // ignore: use_build_context_synchronously
         // await SmsService.sendingSms(context, url);
         await Workmanager().registerOneOffTask(
-          'taskName',
-          "Smslar avtomatik jo'natiliyabdi",
-        );
+                'taskName',
+                "Smslar avtomatik jo'natiliyabdi",
+              );
         print("index 0  true");
       }
     } else {
-      print("false");
-      Workmanager().cancelAll();
+     print("false");
+    Workmanager().cancelAll();
     }
   }
-
   @override
   Widget build(BuildContext context) {
     serLoc = context.watch<MainCubit>().serLoc;
     return Scaffold(
-      //appBar: AppBar(title: Text("New IP > $url")),
-      appBar: AppBar(title:
-          Row(
-            children: [
-              Text("New IP > $url"),
-              Expanded(child: Container()),
-              Text("$smsLimt sms limit"),
-            ],
-          ),
+      appBar: AppBar(title: Text("New IP > $url",
+      
       ),
+      elevation: 0,),
+      
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 40.0.r),
@@ -128,12 +122,14 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
                     ElevatedButton(
                         onPressed: () async {
                           await SmsService.sendingSms(context, url);
-                          setState(() {});
+                          setState(() {
+                          });
                         },
                         child: const Text("Smslarni jo'natish")),
                   ],
                 ),
               ),
+              Center(),
             ],
           ),
         ),
@@ -150,7 +146,7 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
         child: const Center(
           child: Text(
             'Smslarni yuklang',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24),
           ),
         ),
       );
@@ -170,24 +166,75 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
       );
     }
   }
-
+// ListTile(
+//       leading: CircleAvatar(
+//         backgroundColor: Colors.white,
+//         child: Text(data.id.toString()),
+//       ),
+//       title: Text(data.tel.toString()),
+//       subtitle: Text(data.zapros.toString()),
+//     );
   Widget buildUrlList(
     BuildContext context,
     Datas data,
   ) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.white,
-        child: Text(data.id.toString()),
-      ),
-      title: Text(data.tel.toString()),
-      subtitle: Text(data.zapros.toString()),
-    );
+    return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 14),
+            child: AnimatedContainer(
+             decoration: BoxDecoration(
+              color: Colors.teal.shade100,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.teal.shade400,
+                  blurRadius: 2,
+                  spreadRadius: 2,
+                  offset:const Offset(-2, -2)
+
+                ),
+              const   BoxShadow(
+                  color: Colors.white,
+                  blurRadius: 2,
+                  spreadRadius: 4,
+                  offset: Offset(2, 2)
+
+                )
+              ]
+             ),
+                 duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOutBack,
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: Text(data.id.toString()),
+                    ),
+                    title: Text(data.tel.toString()),
+                    trailing: GestureDetector(
+                        onTap: () {
+                        
+                          setState(() {
+                           if( _selectIndecator==index)
+                        { _selectIndecator=null;}
+                         else
+                          {_selectIndecator=index as int?;}
+                         
+                          });
+                        },
+                        child: _selectIndecator==index
+                            ? const Icon(Icons.arrow_upward)
+                            : const Icon(Icons.arrow_downward)),
+                    subtitle: Text(
+                     data.zapros.toString(),
+                      maxLines:_selectIndecator==index? debugFocusChanges.hashCode:3,
+                      style: TextStyle(),
+                    ),
+                  ),
+                ),
+          );
   }
 
   Future getDataFlag1(String url, BuildContext context) async {
     try {
-      SmsService.getSmsFlag1(url, context: context).then((value) {
+      SmsService.getSmsFlag1(url,context: context).then((value) {
         return setState(() {});
       });
     } catch (e) {
