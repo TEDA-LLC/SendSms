@@ -280,7 +280,7 @@ class _SettingsViewState extends State<SettingsView>
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(content),
       backgroundColor: color,
-      action: SnackBarAction(label: "Hide", onPressed: () {}),
+      action: SnackBarAction(label: "Hide----", onPressed: () {}),
     ));
   }
 }
