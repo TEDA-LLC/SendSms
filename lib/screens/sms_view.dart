@@ -80,6 +80,7 @@ class _SmsViewState extends State<SmsView> with WidgetsBindingObserver {
             children: [
               Text("New IP > $url"),
               Expanded(child: Container()),
+              if(smsLimt.isNotEmpty)
               Text("$smsLimt sms limit"),
             ],
           ),
