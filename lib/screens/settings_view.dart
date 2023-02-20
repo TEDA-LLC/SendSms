@@ -90,6 +90,7 @@ class _SettingsViewState extends State<SettingsView>
                       //title: Text("Sms limitingizni kiriting"),
                       title: Column(
                         children: [
+                          if(urlIndexBox.read("sms_limt") != null)
                           Text(
                               "Sms limitingiz: ${urlIndexBox.read("sms_limt")}"),
                           SizedBox(
@@ -156,7 +157,7 @@ class _SettingsViewState extends State<SettingsView>
                   padding: EdgeInsets.only(right: 15.0.r),
                   child: SizedBox(
                     height: 60.h,
-                    width: 300.w,
+                    width: MediaQuery.of(context).size.width * 0.69,
                     child: TextFormField(
                       controller: urlController,
                     ),
